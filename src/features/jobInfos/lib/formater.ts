@@ -2,15 +2,13 @@ import { ExperienceLevel } from "@/drizzle/schema";
 
 export function formateExperienceLevel(level: ExperienceLevel) {
   switch (level) {
-    case "junior": {
+    case "junior":
       return "Junior";
-    }
-    case "mid-level": {
+    case "mid-level":
       return "Mid-Level";
-    }
     case "senior":
       return "Senior";
     default:
-      throw new Error(`Unknown experience level :${level satisfies never}`);
+      throw new Error(`Unknown experience level: ${level satisfies never}`);
   }
 }
