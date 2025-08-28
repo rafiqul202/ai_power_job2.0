@@ -41,7 +41,7 @@ type JobInfoFormProps = {
 };
 
 const JobInfoForm: React.FC<JobInfoFormProps> = ({
-  jobInfo,
+  jobInfo
 }: {
   jobInfo?: Pick<
     typeof JobInfoTable.$inferSelect,
