@@ -40,7 +40,7 @@ export async function JobInfo() {
   if (userId == null) return redirectToSignIn();
   const jobInfos = await getJobInfos(userId);
   // console.log("jobinfo console log",{jobInfo})
-  if (jobInfos.length == 0) {
+  if (jobInfos.length === 0) {
     return <NoJobInfos />;
   }
   return (

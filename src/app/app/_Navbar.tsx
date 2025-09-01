@@ -1,29 +1,25 @@
 "use client";
 
-import Link from "next/link";
 import {
   BookOpenIcon,
-  BrainCircuit,
+  BrainCircuitIcon,
   FileSlidersIcon,
+  LogOut,
   SpeechIcon,
+  User,
 } from "lucide-react";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useClerk } from "@clerk/nextjs";
-
-type NavbarProps = {
-  user: {
-    name: string;
-    imageUrl: string;
-  };
-};
+import { SignOutButton, useClerk } from "@clerk/nextjs";
+import Link from "next/link";
+import { useParams, usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import UserAvatar from "@/features/users/components/UserAvater";
 
 const navLinks = [
   { name: "Interviews", href: "interviews", Icon: SpeechIcon },
@@ -31,57 +27,60 @@ const navLinks = [
   { name: "Resume", href: "resume", Icon: FileSlidersIcon },
 ];
 
-const Navbar = ({ user }: NavbarProps) => {
-  const { openUserProfile, signOut } = useClerk();
-
-  const initials = (user?.name ?? "U N")
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+export function Navbar({ user }: { user: { name: string; imageUrl: string } }) {
+  const { openUserProfile } = useClerk();
+  const { jobInfoId } = useParams();
+  const pathName = usePathname();
 
   return (
-    <header className="h-header border-b">
-      <div className="mx-auto flex h-full w-full max-w-7xl items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2">
-          <BrainCircuit className="size-8 animate-pulse text-primary" />
-          <span className="text-lg font-semibold tracking-tight">Landr</span>
+    <nav className="h-header border-b">
+      <div className="container flex h-full items-center justify-between">
+        <Link href="/app" className="flex items-center gap-2">
+          <BrainCircuitIcon className="size-8 text-primary" />
+          <span className="text-xl font-bold">Landr</span>
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
+          {typeof jobInfoId === "string" &&
+            navLinks.map(({ name, href, Icon }) => {
+              const hrefPath = `/app/job-infos/${jobInfoId}/${href}`;
+
+              return (
+                <Button
+                  variant={pathName === hrefPath ? "secondary" : "ghost"}
+                  key={name}
+                  asChild
+                  className="cursor-pointer max-sm:hidden"
+                >
+                  <Link href={hrefPath}>
+                    <Icon />
+                    {name}
+                  </Link>
+                </Button>
+              );
+            })}
+
           <ThemeToggle />
 
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button aria-label="User menu" className="rounded-full">
-                <Avatar>
-                  <AvatarImage src={user?.imageUrl} alt={user?.name} />
-                  <AvatarFallback>{initials}</AvatarFallback>
-                </Avatar>
-              </button>
+            <DropdownMenuTrigger>
+              <UserAvatar user={user} />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-40">
-              <DropdownMenuItem
-                onClick={() => openUserProfile?.()}
-                className="cursor-pointer"
-              >
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem onClick={() => openUserProfile()}>
+                <User className="mr-2" />
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => signOut?.({ redirectUrl: "/" })}
-                variant="destructive"
-                className="cursor-pointer"
-              >
-                Logout
-              </DropdownMenuItem>
+              <SignOutButton>
+                <DropdownMenuItem>
+                  <LogOut className="mr-2" />
+                  Logout
+                </DropdownMenuItem>
+              </SignOutButton>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
-    </header>
+    </nav>
   );
-};
-
-export default Navbar;
+}

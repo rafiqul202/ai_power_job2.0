@@ -18,6 +18,6 @@ export function OnboardingClient({ userId }: { userId: string }) {
       clearInterval(intervalId);
     }, 250);
     return () => clearInterval(intervalId);
-  }, [userId]);
+  }, [userId, router]);
   return <Loader2Icon className="animate-spin size-24" />;
 }

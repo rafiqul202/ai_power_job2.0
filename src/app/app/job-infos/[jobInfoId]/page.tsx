@@ -54,15 +54,13 @@ const JobInfoIdPage = async ({
   // get query all jobInfors
   const jobInfo = getCurrentUser({ allData: true }).then(
     async ({ userId, redirectToSignIn }) => {
-      if (userId == null) return redirectToSignIn();
+      if (userId == null) return null;
       const jobInfo = await getJobInfo(jobInfoId, userId);
       if (jobInfo == null) return notFound();
       return jobInfo;
     }
   );
-  const { userId, redirectToSignIn } = await getCurrentUser({ allData: true });
-  if (userId == null) redirectToSignIn();
-  // const jobInfo =  getJobInfo(jobInfoId, userId);
+
   return (
     <div className="container my-4 space-y-4">
       <BackLink href="/app">Dashboard</BackLink>
